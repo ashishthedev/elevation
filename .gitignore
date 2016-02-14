@@ -1,0 +1,6 @@
+log.txt
+s3Files.txt
+startedUnzipping.txt
+rawData/
+*.pyc
+*.log
