@@ -1,10 +1,9 @@
-#Bottle server for elevation service.
+#Bottle server for elevation service1
 
 import bottle
-from bottle import Bottle, run, response
+from bottle import run, response
 import fnmatch
 import gdal
-import glob
 import os
 import logging
 import time
@@ -27,6 +26,10 @@ LOOKUP_FILES = [
         (32750, os.path.join(UNZIPPED_RAW_DATA_DIR, "WA5mDEM", "hdr.adf")),
         (32750, os.path.join(UNZIPPED_RAW_DATA_DIR, "SA5mDEM", "hdr.adf")),
         ]
+
+KNOWN_NO_DATA_VALUES = [
+"-3.40282346638529e+38",
+]
 
 def convertLatLngToEastingNorthingsToLatLng(lat, lng, sourceEPSG):
     import ogr
@@ -86,15 +89,53 @@ def enable_cors(fn):
 def getEPSGCodesAndFiles():
     return LOOKUP_FILES
 
-def getFiles():
+def getGlobbedFiles():
     matches = []
     for root, dirnames, filenames in os.walk(UNZIPPED_RAW_DATA_DIR):
         for filename in fnmatch.filter(filenames, FILE_FORMAT):
             matches.append(os.path.join(root, filename))
     return matches
 
+def searchElevationForLatLngInFile(filename, lat, lng):
+    import subprocess
+    print("_"*70)
+    print(filename)
+    print("_"*70)
+    gdallocationinfo = "/usr/bin/gdallocationinfo"
+    valonly = "-valonly"
+    geoloc = "-geoloc"
+    wgs84 = "-wgs84"
+    cmd = [gdallocationinfo, valonly, geoloc, wgs84, filename, lng, lat ] #Note: lat=y; lng=x
+    print("cmd=\n{}".format(" ".join(cmd)))
+    elevation = subprocess.check_output(cmd)
+    elevation = elevation.rstrip()#Remove the "\n" in the end
+    return elevation
+
+
+def GetNoDataValueForFile(filename):
+    ds = gdal.Open(filename, gdal.GA_ReadOnly)
+    if ds is None:
+        raise Exception("Could not open {}".format(filename))
+
+    return str(ds.GetRasterBand(1).GetNoDataValue())
+
+def searchElevationForLatLng(lat, lng):
+    logging.info("_"*70)
+    for filename in getGlobbedFiles():
+        noDataValue = GetNoDataValueForFile(filename)
+        print("noDataValue = {} of type {}".format(noDataValue, type(noDataValue)))
+        elevation = searchElevationForLatLngInFile(filename, lat, lng)
+        print("Elevation = [{}]".format(elevation))
+        #noDataValue = "-3.40282346638529e+38"
+
+        if elevation and elevation != noDataValue and elevation not in KNOWN_NO_DATA_VALUES:
+            return elevation
+    else:
+        return "NA"
 
 app = bottle.default_app()
+gdal.AllRegister()
+
 @app.route('/')
 def index():
     return '<pre>Elevation Service Running</pre>'
@@ -103,22 +144,34 @@ def index():
 @enable_cors
 def elevation(lat, lng):
     logging.info("_"*70)
+    print("_"*70)
+    print("_"*70)
+    print("_"*70)
+    print("_"*70)
+    print("_"*70)
+    elevation = None
+    elevation = searchElevationForLatLng(lat, lng)
+    utmEastings = None
+    utmNorthings = None
     lat = float(lat)
     lng = float(lng)
-    elevation = None
-    for sourceEPSG, filename in getEPSGCodesAndFiles():
-        utmEastings, utmNorthings = convertLatLngToEastingNorthingsToLatLng(lat, lng, sourceEPSG)
-        found, x = searchElevationForEastingsAndNorthings(filename, utmEastings, utmNorthings)
-        if found:
-            elevation = x
-            fn = filename
-            break
-    now = time.time()
-    if elevation:
-        logging.info("{now}: Elevation: {elevation} at lat:{lat}, lng:{lng} in file:{fn}".format(**locals()))
-    else:
-        elevation = "NA"
-        logging.info("{now}: Elevation data not available for lat:{lat}, lng:{lng}".format(**locals()))
+    if False:
+        #for sourceEPSG, filename in getEPSGCodesAndFiles():
+        for filename in getGlobbedFiles():
+            sourceEPSG=32750
+            #utmEastings, utmNorthings = convertLatLngToEastingNorthingsToLatLng(lat, lng, sourceEPSG)
+            utmEastings = lat
+            utmNorthings = lng
+            found, x = searchElevationForEastingsAndNorthings(filename, utmEastings, utmNorthings)
+            if found:
+                elevation = x
+                break
+        now = time.time()
+        if elevation:
+            logging.info("{now}: Elevation: {elevation} at lat:{lat}, lng:{lng} in file:{fn}".format(**locals()))
+        else:
+            elevation = "NA"
+            logging.info("{now}: Elevation data not available for lat:{lat}, lng:{lng}".format(**locals()))
 
     import json
     response.content_type = 'application/json'
