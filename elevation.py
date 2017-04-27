@@ -6,14 +6,13 @@
 import bottle
 from bottle import run, response
 import fnmatch
-import json
 import gdal
-import os
+import json
 import logging
+import os
+import time
 
 logging.basicConfig(filename='elevation.log', format=logging.BASIC_FORMAT, level=logging.DEBUG)
-logging.info('_'*70)
-logging.info("SERVER RESTARTED")
 logging.info('_'*70)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -66,12 +65,11 @@ def GetNoDataValueForFile(filename):
     return str(ds.GetRasterBand(1).GetNoDataValue())
 
 def searchElevationForLatLng(lat, lng):
-    logging.info("_"*70)
     for filename in getGlobbedFiles():
         noDataValue = GetNoDataValueForFile(filename)
         elevation = searchElevationForLatLngInFile(filename, lat, lng)
         if elevation and elevation != noDataValue and elevation not in KNOWN_NO_DATA_VALUES:
-            logging.info("Found elevation {} in file {}".format(elevation, filename))
+            logging.info("{} - Found elevation {} in file {}".format(time.time(), elevation, filename))
             return elevation
     else:
         return "NA"
@@ -81,13 +79,52 @@ gdal.AllRegister()
 
 @app.route('/')
 def index():
-    return '<pre>Elevation Service Running</pre>'
+
+    html = """
+<html>
+<head>
+<meta name="author" content="Ashish Anand">
+<meta name="email" content="ashishthedev@gmail.com">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Elevation as Service</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/">Home</a></li>
+    </ul>
+  </div>
+</nav>
+    <div class="container">
+    <h2>Status:</h2>
+    <pre>
+    Elevation Service Running</pre>
+    <h2>Usage:</h2>
+    <pre>
+    http://elevation.adaptinfrastructure.com/elevation/lat/-12.659170573364879/lng/132.255024546978</pre>
+    <h2>How to add more GIS data on server:</h2>
+    <h4>Step 1:</h4>
+    <pre>
+    cd zippedAdfFiles
+    wget https://s3-ap-southeast-2.amazonaws.com/crcsi.ga.gov.au/5m-dem/NSW5mDEM.zip</pre>
+    <h4>Step 2:</h4>
+    <pre>
+    cd unzippedAdfFiles
+    mkdir NSW5mDEM
+    cd NSW5mDEM
+    7za e ../../zippedAdfFiles/NSW5mDEM.zip
+    sudo restart elevation</pre>
+    </div>
+</body>
+"""
+    return html
 
 @app.route('/elevation/lat/<lat>/lng/<lng>')
 @enable_cors
 def elevation(lat, lng):
-    logging.info("_"*70)
-
     response.content_type = 'application/json'
     return json.dumps({
         "elevation": searchElevationForLatLng(lat, lng)
