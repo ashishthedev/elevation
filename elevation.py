@@ -122,6 +122,14 @@ def index():
 """
     return html
 
+@app.route('/elevation/ping')
+@enable_cors
+def ping():
+    from json import dumps
+    rv = "ok"
+    response.content_type = 'application/json'
+    return dumps(rv)
+
 @app.route('/elevation/lat/<lat>/lng/<lng>')
 @enable_cors
 def elevation(lat, lng):
@@ -131,5 +139,5 @@ def elevation(lat, lng):
         })
 
 if __name__ == "__main__":
-    run(host='0.0.0.0', port=8080, reloader=True, debug=True)
+    run(host='0.0.0.0', port=8282, reloader=True, debug=True)
 
