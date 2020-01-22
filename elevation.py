@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import time
+from provision import provisionZoneName, determineProvisioningCurrentState
 
 logging.basicConfig(filename='elevation.log', format=logging.BASIC_FORMAT, level=logging.DEBUG)
 logging.info('_'*70)
@@ -122,6 +123,7 @@ def index():
 """
     return html
 
+
 @app.route('/elevation/ping')
 @enable_cors
 def ping():
@@ -130,6 +132,7 @@ def ping():
     response.content_type = 'application/json'
     return dumps(rv)
 
+
 @app.route('/elevation/lat/<lat>/lng/<lng>')
 @enable_cors
 def elevation(lat, lng):
@@ -137,6 +140,22 @@ def elevation(lat, lng):
     return json.dumps({
         "elevation": searchElevationForLatLng(lat, lng)
         })
+
+
+@app.route('/provisioningCurrentState/<zoneName>')
+@enable_cors
+def provisioningCurrentState(zoneName):
+    response.content_type = 'application/json'
+    return json.dumps(determineProvisioningCurrentState(zoneName))
+
+
+@app.route('/startProvisioning/<zoneName>')
+@enable_cors
+def startProvisioning(zoneName):
+    provisionZoneName(zoneName)
+    response.content_type = 'application/json'
+    return json.dumps({"status_msg": f"Provisioning of {zoneName} is complete."})
+
 
 if __name__ == "__main__":
     run(host='0.0.0.0', port=8282, reloader=True, debug=True)
