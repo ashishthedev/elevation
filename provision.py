@@ -22,8 +22,9 @@ def touch(filepath):
     return
 
 def ensureDirExists(dirpath):
-	os.makedirs(dirpath, exist_ok=True)
-	return
+        if not os.path.exists(dirpath):
+            os.makedirs(dirpath)
+            return
 
 def silentremove2(filename):
     import errno
