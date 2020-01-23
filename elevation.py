@@ -154,7 +154,7 @@ def provisioningCurrentState(zoneName):
 def startProvisioning(zoneName):
     provisionZoneName(zoneName)
     response.content_type = 'application/json'
-    return json.dumps({"status_msg": f"Provisioning of {zoneName} is complete."})
+    return json.dumps({"status_msg": "Provisioning of {} is complete.".format(zoneName)})
 
 
 if __name__ == "__main__":
