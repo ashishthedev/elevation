@@ -4,6 +4,7 @@ startedUnzipping.txt
 rawData/
 *.pyc
 *.log
+*.sqlite3
 
 
 # Workspace files are user-specific
