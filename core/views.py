@@ -19,23 +19,29 @@ def ping(request):
 
 
 def elevation(request, lat, lng):
-	print("Got lat: {}, lng: {}".format(lat, lng))
 	cmd = ["python", "elevation_prog.py", "--lat", lat, "--lng", lng]
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	
 	stdout, stderr = proc.communicate()
 	if stdout:
- 		return JsonResponse({
- 			"elevation": str(stdout.rstrip().decode("utf-8") )
-        })
+		if (len(stdout.split()) == 1):
+	 		return JsonResponse({
+	 			"status": "success",
+	 			"elevation": str(stdout.rstrip().decode("utf-8") )
+	        })
+		else:
+	 		return JsonResponse({
+	 			"status": "failure",
+	 			"elevation": str(stdout.rstrip().decode("utf-8") )
+	        })
 	elif stderr:
  		return JsonResponse({
- 			"elevation": str(stderr)
+ 			"status": "failure",
+ 			"elevation": str(stderr.rstrip().decode("utf-8") )
         })
 	else:
 		return JsonResponse({
+ 			"status": "failure",
  			"elevation": "NA"
         })
-
-
 

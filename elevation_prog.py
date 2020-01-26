@@ -66,5 +66,6 @@ if __name__ == "__main__":
         elevation = searchElevationForLatLng(args.lat, args.lng)
         print(elevation)
         exit(0)
-    except: #Eat the exception so that real error gets printed and passed back.
+    except Exception as ex: #Eat the exception so that real error gets printed and passed back.
+        # print("Error: " + str(ex))
         pass
