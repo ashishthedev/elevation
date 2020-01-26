@@ -1,16 +1,15 @@
 import gdal
 import fnmatch
 import os
-import time
+import datetime
 import logging
 import argparse
 
-logging.basicConfig(filename='elevation.log', format=logging.BASIC_FORMAT, level=logging.DEBUG)
+logging.basicConfig(filename='elevation_prog.log', format=logging.BASIC_FORMAT, level=logging.DEBUG)
 logging.info('_'*70)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UNZIPPED_RAW_DATA_DIR = os.path.join(BASE_DIR, "rawData", "unzippedAdfFiles")
-print(UNZIPPED_RAW_DATA_DIR)
 FILE_FORMAT = "hdr.adf"
 
 KNOWN_NO_DATA_VALUES = [
@@ -50,7 +49,7 @@ def searchElevationForLatLng(lat, lng):
         noDataValue = GetNoDataValueForFile(filename)
         elevation = searchElevationForLatLngInFile(filename, lat, lng)
         if elevation and elevation != noDataValue and elevation not in KNOWN_NO_DATA_VALUES:
-            logging.info("{} - Found elevation {} in file {}".format(time.time(), elevation, filename))
+            logging.info("{} - Found elevation {} for lat: {} and lng: {} in file {}".format(datetime.datetime.now(), elevation, lat, lng, filename))
             return elevation
     else:
         return "NA"
@@ -67,6 +66,5 @@ if __name__ == "__main__":
         elevation = searchElevationForLatLng(args.lat, args.lng)
         print(elevation)
         exit(0)
-    except Exception as ex:
-        print(str(ex))
-        exit(1)
+    except: #Eat the exception so that real error gets printed and passed back.
+        pass

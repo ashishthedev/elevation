@@ -4,5 +4,5 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('elevation/ping', views.ping, name='ping'),
-    path('elevation/lat/<float:lat>/lng/<float:lng>', views.ping, name='elevation'),
+    path('elevation/lat/<str:lat>/lng/<str:lng>', views.elevation, name='elevation'),
 ]
