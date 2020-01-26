@@ -1,3 +1,6 @@
 from django.contrib import admin
+from provision.models import Provisioner
 
-# Register your models here.
+@admin.register(Provisioner)
+class ProvisionersAdmin(admin.ModelAdmin):
+    pass
