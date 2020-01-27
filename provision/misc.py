@@ -175,29 +175,3 @@ class cd:
 
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
-
-# 	unzip_adf_files(){
-# 		set +x
-# 		echo "======================================"
-# 		echo "Unzipping all adf Files"
-# 		echo "======================================"
-# 		set -x 
-# 		mkdir -p /var/elevation/rawData/unzippedAdfFiles
-# 		cd /var/elevation/rawData/unzippedAdfFiles
-# 		FILES=/var/elevation/rawData/zippedAdfFiles/*.zip
-# 		for f in $FILES
-# 		do
-# 			set +x
-# 			echo "======================================"
-# 			echo "Unzipping adf File: "
-# 			echo $f
-# 			echo "======================================"
-# 			set -x 
-# 			dirname=$(basename $f .zip)
-# 			mkdir $dirname
-# 			cd $dirname
-# 			7za e $f
-# 			cd ..
-# 		done
-
-# 	}
