@@ -4,7 +4,7 @@
 #################################################################
 
 from django.db import models
-from provision.misc import subprocess_call_with_output_returned
+from subprocess_logging import subprocess_call_with_output_returned
 import datetime
 
 ZIP_FILES = {
@@ -75,6 +75,12 @@ class Provisioner(models.Model):
             zip_file_url = ZIP_FILES[zoneName]
             outs, errs = subprocess_call_with_output_returned("ls")
             import time; time.sleep(10)
+            # with cd(UNZIPPED_FILES_DIR):
+            # subprocess_call_with_logging(
+            #     logFileForZone(zoneName),
+            #     ["7za", "e", os.path.join(ZIPPED_FILES_DIR, zoneName + ".zip")]
+            #     )
+
             obj.log_text = outs or errs
             if outs:
                 obj.state = SUCCESS

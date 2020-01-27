@@ -5,7 +5,7 @@
 ###########################################################
 import os
 
-from file_logging import subprocess_call_with_logging
+from subprocess_logging import subprocess_call_with_logging
 
 ZIPPED_FILES_DIR = "/var/elevation/rawData/zippedAdfFiles"
 UNZIPPED_FILES_DIR = "/var/elevation/rawData/unzippedAdfFiles"
