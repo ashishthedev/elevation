@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from provision.models import Provisioner
 
 def startProvisioning(request, zoneName):
-	# Provisioner.
+	Provisioner.provision(zoneName)
 	return JsonResponse({"status": "WIP"})
 
 def provisioningCurrentState(request, zoneName):

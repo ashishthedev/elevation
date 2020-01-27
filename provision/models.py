@@ -34,17 +34,18 @@ class ProvisioningException(Exception):
 class Provisioner(models.Model):
     zoneName = models.CharField(max_length=10)
     state = models.CharField(blank=True, choices=STATE_CHOICES, max_length=10, default=INITIAL)
-    started_at = models.DateTimeField()
+    started_at = models.DateTimeField(blank=True, null=True)
     finished_at = models.DateTimeField(blank=True, null=True)
     time_taken = models.DurationField(blank=True, null=True)
     log_text = models.TextField(blank=True, null=True)
 
     def __str__(self):
-    	return f"{self.name} {self.state}"
+    	return f"{self.zoneName} {self.state}"
 
     @classmethod
     def getCurrentStateFor(cls, zoneName):
-        return cls.objects.get_or_create(name=zoneName).state
+        obj, _ = cls.objects.get_or_create(zoneName=zoneName)
+        return obj.state
 
     @classmethod
     def provision(cls, zoneName):
@@ -60,7 +61,7 @@ class Provisioner(models.Model):
 
     @classmethod
     def _provision(cls, zoneName):
-        obj = cls.objects.get_or_create(name=zoneName)
+        obj, _ = cls.objects.get_or_create(zoneName=zoneName)
         if obj.state not in [INITIAL, FAILURE]:
             raise Exception("We should not have reached here.")
         obj.log_text = ""
