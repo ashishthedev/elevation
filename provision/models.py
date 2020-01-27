@@ -1,6 +1,11 @@
-from django.db import models
+#################################################################
+## Elevation on demand provisioners
+## Ashish Anand
+#################################################################
 
-# Create your models here.
+from django.db import models
+from provision.misc import subprocess_call_with_output_returned
+import datetime
 
 ZIP_FILES = {
 	"NT5": "https://storage.googleapis.com/elevation_rawdata_zipped_bucket/NT5mDEM.zip",
@@ -38,13 +43,13 @@ class Provisioner(models.Model):
     	return f"{self.name} {self.state}"
 
     @classmethod
-    def _getCurrentStateFor(cls, zoneName):
+    def getCurrentStateFor(cls, zoneName):
         return cls.objects.get_or_create(name=zoneName).state
 
     @classmethod
     def provision(cls, zoneName):
 
-        state = cls._getCurrentStateFor(zoneName)
+        state = cls.getCurrentStateFor(zoneName)
         if state == SUCCESS:
             raise ProvisioningException(f"{zoneName} is already provisioned.")
         elif state == WIP:
@@ -55,13 +60,33 @@ class Provisioner(models.Model):
 
     @classmethod
     def _provision(cls, zoneName):
-        if zoneName not in ZIP_FILES:
-            raise ProvisioningException(f"{zoneName} is unknown. Code change is required for its provisioning.")
-        zip_file_url = ZIP_FILES[zoneName]
-
         obj = cls.objects.get_or_create(name=zoneName)
+        if obj.state not in [INITIAL, FAILURE]:
+            raise Exception("We should not have reached here.")
+        obj.log_text = ""
+        obj.state = WIP
+        obj.started_at = datetime.datetime.now()
 
+        obj.save()
+        try:
+            if zoneName not in ZIP_FILES:
+                raise ProvisioningException(f"{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.")
 
+            zip_file_url = ZIP_FILES[zoneName]
+            outs, errs = subprocess_call_with_output_returned("ls")
+            import time; time.sleep(10)
+            obj.log_text = outs or errs
+            if outs:
+                obj.state = SUCCESS
+            elif errs:
+                obj.state = FAILURE
+        except Exception as ex:
+            obj.log_text = str(ex)
+            obj.state = FAILURE
+        finally:
+            obj.finished_at = datetime.datetime.now()
+            obj.time_taken = obj.finished_at - obj.started_at
+            obj.save()
         return
 
 

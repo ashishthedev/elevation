@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.http import JsonResponse
 
-# Create your views here.
+
+def startProvisioning(request):
+	return JsonResponse({"status": "ok"})
+
+def provisioningCurrentState(request):
+	return JsonResponse({"status": "ok"})
