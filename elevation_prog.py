@@ -1,3 +1,4 @@
+from __future__ import print_function
 import gdal
 import fnmatch
 import os
@@ -56,13 +57,12 @@ def searchElevationForLatLng(lat, lng):
         return "NA"
 
 if __name__ == "__main__":
-    # python elevation_prog.py --lng 132.255024546978 --lat -12.659170573364879
+    # python elevation_prog.py --lat -12.659170573364879 --lng 132.255024546978 
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--lat', dest='lat', type=str, help='Latitude')
     parser.add_argument('--lng', dest='lng', type=str, help='Longitude')
 
     args = parser.parse_args()
-
     try:
         elevation = searchElevationForLatLng(args.lat, args.lng)
         print(elevation)
