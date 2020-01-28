@@ -10,7 +10,7 @@ def subprocess_call_with_logging(logfilePath, popenargs, **kwargs):
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    process = subprocess.Popen(popenargs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = subprocess.Popen(popenargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def check_io():
            while True:
@@ -27,7 +27,7 @@ def subprocess_call_with_logging(logfilePath, popenargs, **kwargs):
 
 def subprocess_call_with_str_logging(popenargs, **kwargs):
 
-    process = subprocess.Popen(popenargs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = subprocess.Popen(popenargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def check_io():
         interim_text = ""
@@ -47,7 +47,7 @@ def subprocess_call_with_str_logging(popenargs, **kwargs):
     return log_txt
 
 def subprocess_call_with_output_returned(popenargs, **kwargs):
-    proc = subprocess.Popen(popenargs, **kwargs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(popenargs, **kwargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = proc.communicate()
     return outs, errs
 

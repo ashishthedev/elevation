@@ -4,6 +4,7 @@ import os
 import datetime
 import logging
 import argparse
+import sys
 
 logging.basicConfig(filename='elevation_prog.log', format=logging.BASIC_FORMAT, level=logging.DEBUG)
 logging.info('_'*70)
@@ -67,5 +68,5 @@ if __name__ == "__main__":
         print(elevation)
         exit(0)
     except Exception as ex: #Eat the exception so that real error gets printed and passed back.
-        # print("Error: " + str(ex))
+        print("Exception: " + str(ex), file=sys.stderr)
         pass
