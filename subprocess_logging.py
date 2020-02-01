@@ -34,7 +34,7 @@ def subprocess_call_with_str_logging(popenargs, **kwargs):
         while True:
             output = process.stdout.readline().decode()
             if output:
-                interim_text += f"{output}\n"
+                interim_text += "{output}\n".format(output=output)
             else:
                 break
 
@@ -43,7 +43,7 @@ def subprocess_call_with_str_logging(popenargs, **kwargs):
     while process.poll() is None:
         interim_text = check_io()
         if interim_text:
-            log_txt += f"{interim_text}\n"
+            log_txt += "{interim_text}\n".format(interim_text=interim_text)
     return log_txt
 
 def subprocess_call_with_output_returned(popenargs, **kwargs):
