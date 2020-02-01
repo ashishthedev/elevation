@@ -23,6 +23,7 @@ sudo apt-get -y install gunicorn git p7zip-full nginx python-pip htop tree
 git config credential.helper store
 sudo apt-get install -y python3 python3-pip python3-venv
 sudo -H pip3 install --upgrade pip
+sudo pip install --ignore-installed httplib2 #Required for installation of gsutil
 sudo pip3 install -r requirements.txt
 
 install_gdal
