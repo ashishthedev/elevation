@@ -47,7 +47,7 @@ class Provisioner(models.Model):
     log_text = models.TextField(blank=True, null=True)
 
     def __str__(self):
-    	return f"{self.zoneName} {self.state}"
+    	return {}.format(self.zoneName, self.state)
 
     @classmethod
     def getCurrentStateFor(cls, zoneName):
@@ -59,9 +59,9 @@ class Provisioner(models.Model):
 
         state = cls.getCurrentStateFor(zoneName)
         if state == SUCCESS:
-            raise ProvisioningException(f"{zoneName} is already provisioned.")
+            raise ProvisioningException("{zoneName} is already provisioned.".format(zoneName=zoneName))
         elif state == WIP:
-            raise ProvisioningException(f"{zoneName} is currently in projress.")
+            raise ProvisioningException("{zoneName} is currently in projress.".format(zoneName=zoneName))
         elif state == INITIAL or state == FAILURE:
             cls._provision(zoneName)
         return
@@ -79,23 +79,23 @@ class Provisioner(models.Model):
         obj.save()
         try:
             if zoneName not in ZIP_FILES:
-                raise ProvisioningException(f"{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.")
+                raise ProvisioningException("{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.".format(zoneName=zoneName))
 
-            cmd = f"python3 provision_prog.py --zoneName {zoneName}"
-            obj.log_text = f"Cmd: {cmd}"
+            cmd = "python3 provision_prog.py --zoneName {zoneName}".format(zoneName=zoneName)
+            obj.log_text = "Cmd: {cmd}".format(cmd=cmd)
 
             outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
 
             if outs:
                 outs = outs.decode("utf-8")
-                obj.log_text += f"\nSUCCESS_MSG: {outs}"
+                obj.log_text += "\nSUCCESS_MSG: {outs}".format(outs=outs)
                 obj.state = SUCCESS
             elif errs:
                 errs = errs.decode("utf-8")
-                obj.log_text += f"\nERROR_MSG: {errs}"
+                obj.log_text += "\nERROR_MSG: {errs}".format(errs=errs)
                 obj.state = FAILURE
         except Exception as ex:
-            obj.log_text += f"\n{cmd} Exception: {ex}"
+            obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
             obj.state = FAILURE
         finally:
             obj.finished_at = datetime.datetime.now()
