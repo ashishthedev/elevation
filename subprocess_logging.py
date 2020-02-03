@@ -1,11 +1,14 @@
 #############################
 ## SUBPROCESS WITH LOGGING
+## Ashish Anand
+## 2019-01-01
 #############################
 import subprocess
 import logging
 import os
 
 def subprocess_call_with_logging(logfilePath, popenargs, **kwargs):
+    # Untested
     LOG_FILE = os.path.basename(logfilePath)
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -26,7 +29,7 @@ def subprocess_call_with_logging(logfilePath, popenargs, **kwargs):
     
 
 def subprocess_call_with_str_logging(popenargs, **kwargs):
-
+    # Untested
     process = subprocess.Popen(popenargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def check_io():
