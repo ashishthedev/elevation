@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'elevationtf.xdi.systems', '35.213.211.23']
 
+CORS_ORIGIN_WHITELIST = [
+    'https://elevation.xdi.systems',
+    'http://localhost:8082',
+    'http://127.0.0.1:8082',
+]
 
 # Application definition
 
@@ -37,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'core',
     'provision',
 ]
@@ -44,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

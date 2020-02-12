@@ -47,7 +47,7 @@ class Provisioner(models.Model):
     log_text = models.TextField(blank=True, null=True)
 
     def __str__(self):
-    	return {}.format(self.zoneName, self.state)
+    	return "{}".format(self.zoneName, self.state)
 
     @classmethod
     def getCurrentStateFor(cls, zoneName):
