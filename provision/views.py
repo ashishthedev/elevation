@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from provision.models import Provisioner
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def startProvisioning(request, zoneName):
 	Provisioner.provision(zoneName)
 	return provisioningCurrentState(request, zoneName)
