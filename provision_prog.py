@@ -46,7 +46,7 @@ def provisionZone(zoneName):
             mkdir {zoneName} && \
             cd {zoneName} && \
             sudo 7za e {dest_zip_file_path}
-            """)
+            """.format(**locals()))
     outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
     return outs, errs
 
