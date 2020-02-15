@@ -39,14 +39,17 @@ def subprocess_call_with_output_returned(popenargs, **kwargs):
 def provisionZone(zoneName):
     source_zip_file_url = ZIP_FILES[zoneName]
     dest_zip_file_path = os.path.join(ZIPPED_FILES_DIR, os.path.basename(source_zip_file_url))
-    cmd = textwrap.dedent(f"""mkdir -p {ZIPPED_FILES_DIR} && \
+    mydict = locals()
+    mydict.update(globals())
+    cmd = textwrap.dedent("""mkdir -p {ZIPPED_FILES_DIR} && \
             sudo gsutil cp {source_zip_file_url} {dest_zip_file_path} && \
             mkdir -p {UNZIPPED_FILES_DIR} && \
             cd {UNZIPPED_FILES_DIR} && \
             mkdir {zoneName} && \
             cd {zoneName} && \
             sudo 7za e {dest_zip_file_path}
-            """.format(**locals()))
+            """.format(**mydict))
+            #""".format(**locals()))
     outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
     return outs, errs
 
