@@ -24,7 +24,7 @@ ZIP_FILES = {
     "NSW5": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
     "QLD5": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
     "SA5" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
-    "TAS": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
+    "TAS5": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
     "VIC5": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
     "WA5" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
 

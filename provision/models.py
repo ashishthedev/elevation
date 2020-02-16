@@ -18,16 +18,6 @@ ZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "zippedAdfFiles")
 UNZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "unzippedAdfFiles")
 
 
-ZIP_FILES = {
-	"NT5": "gs://elevation_rawdata_zipped_bucket/NT5mDEM.zip",
-	"NSW": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
-	"QLD": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
-	"SA" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
-	"TAS": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
-	"VIC": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
-	"WA" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
-
-}
 INITIAL = "INITIAL"
 SUCCESS = "SUCCESS"
 FAILURE = "FAILURE"
@@ -82,10 +72,6 @@ class Provisioner(models.Model):
         obj.time_taken = None
         obj.save()
         try:
-            cmd = ""
-            if zoneName not in ZIP_FILES:
-                raise ProvisioningException("{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.".format(zoneName=zoneName))
-
             cmd = "python3 provision_prog.py --zoneName {zoneName}".format(zoneName=zoneName)
             obj.log_text = "Cmd: {cmd}".format(cmd=cmd)
 
