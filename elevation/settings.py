@@ -153,12 +153,12 @@ LOGGING = {
         # },
         # root logger
         '': {
-            'level': 'WARNING',
-            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'handlers': ['file', 'console'],
         },
         'elevation': {
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            'handlers': ['console', 'file'],
+            'handlers': ['file', 'console'],
             'propagate': False, # required to avoid double logging with root logger
         },
     }
