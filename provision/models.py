@@ -9,6 +9,10 @@ import datetime
 import os
 import textwrap
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "zippedAdfFiles")
 UNZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "unzippedAdfFiles")
@@ -98,6 +102,7 @@ class Provisioner(models.Model):
         except Exception as ex:
             obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
             obj.state = FAILURE
+            logger.exception(obj.log_text)
         finally:
             obj.finished_at = datetime.datetime.now()
             obj.time_taken = obj.finished_at - obj.started_at
