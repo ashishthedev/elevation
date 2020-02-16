@@ -95,7 +95,10 @@ class Provisioner(models.Model):
                 obj.log_text += "\nERROR_MSG: {errs}".format(errs=errs)
                 obj.state = FAILURE
         except Exception as ex:
-            obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
+            if cmd:
+                obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
+            else:
+                obj.log_text += "\nException: {ex}".format(ex=ex)
             obj.state = FAILURE
         finally:
             obj.finished_at = datetime.datetime.now()
