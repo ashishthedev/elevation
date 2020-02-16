@@ -21,12 +21,12 @@ KNOWN_NO_DATA_VALUES = [
 
 ZIP_FILES = {
     "NT5": "gs://elevation_rawdata_zipped_bucket/NT5mDEM.zip",
-    "NSW": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
-    "QLD": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
-    "SA" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
+    "NSW5": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
+    "QLD5": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
+    "SA5" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
     "TAS": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
-    "VIC": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
-    "WA" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
+    "VIC5": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
+    "WA5" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
 
 }
 
@@ -52,8 +52,8 @@ def provisionZone(zoneName):
             #""".format(**locals()))
     outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
     logging.info("Tried to provision {}".format(zoneName))
-    logging.info("Outs: {}".format(outs))
-    logging.info("Errs: {}".format(errs))
+    logging.info("Outs: {}".format(outs.decode("utf-8")))
+    logging.info("Errs: {}".format(errs.decode("utf-8")))
     return outs, errs
 
 
