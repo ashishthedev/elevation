@@ -78,6 +78,7 @@ class Provisioner(models.Model):
         obj.time_taken = None
         obj.save()
         try:
+            cmd = ""
             if zoneName not in ZIP_FILES:
                 raise ProvisioningException("{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.".format(zoneName=zoneName))
 
@@ -95,10 +96,7 @@ class Provisioner(models.Model):
                 obj.log_text += "\nERROR_MSG: {errs}".format(errs=errs)
                 obj.state = FAILURE
         except Exception as ex:
-            if cmd:
-                obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
-            else:
-                obj.log_text += "\nException: {ex}".format(ex=ex)
+            obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
             obj.state = FAILURE
         finally:
             obj.finished_at = datetime.datetime.now()
