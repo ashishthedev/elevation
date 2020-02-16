@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOG_DIR = os.path.join(BASE_DIR, os.pardir, "logs")
+LOG_DIR = os.path.join(BASE_DIR, "logs")
 
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
@@ -132,20 +132,20 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'django.log'),
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
-        # 'gunicorn': {
-        #     'level': 'DEBUG',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'formatter': 'verbose',
-        #     'filename': os.path.join(LOG_DIR, 'gunicorn.log'),
-        #     'maxBytes': 1024 * 1024 * 100,  # 100 mb
-        # }
+        'gunicorn': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(LOG_DIR, 'gunicorn.log'),
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        }
     },
     'loggers': {
-        # 'gunicorn.errors': {
-        #     'level': 'DEBUG',
-        #     'handlers': ['gunicorn'],
-        #     'propagate': True,
-        # },
+        'gunicorn.errors': {
+            'level': 'DEBUG',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
         'django': {
             'handlers': ['file', 'console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'), # set the environment variable DJANGO_LOG_LEVEL=DEBUG to see all of Django’s debug logging which is very verbose as it includes all database queries
