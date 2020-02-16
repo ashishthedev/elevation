@@ -132,24 +132,34 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'django.log'),
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
-        'gunicorn': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': os.path.join(LOG_DIR, 'gunicorn.log'),
-            'maxBytes': 1024 * 1024 * 100,  # 100 mb
-        }
+        # 'gunicorn': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'formatter': 'verbose',
+        #     'filename': os.path.join(LOG_DIR, 'gunicorn.log'),
+        #     'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        # }
     },
     'loggers': {
-        'gunicorn.errors': {
-            'level': 'DEBUG',
-            'handlers': ['gunicorn'],
-            'propagate': True,
+        # 'gunicorn.errors': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['gunicorn'],
+        #     'propagate': True,
+        # },
+        # 'django': {
+        #     'handlers': ['file', 'console'],
+        #     'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'), # set the environment variable DJANGO_LOG_LEVEL=DEBUG to see all of Django’s debug logging which is very verbose as it includes all database queries
+        #     'propagate': True,
+        # },
+        # root logger
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console', 'file'],
         },
-        'django': {
-            'handlers': ['file', 'console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'), # set the environment variable DJANGO_LOG_LEVEL=DEBUG to see all of Django’s debug logging which is very verbose as it includes all database queries
-            'propagate': True,
+        'elevation': {
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ['console', 'file'],
+            'propagate': False, # required to avoid double logging with root logger
         },
     }
 }
