@@ -51,6 +51,9 @@ def provisionZone(zoneName):
             """.format(**mydict))
             #""".format(**locals()))
     outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
+    logging.info("Tried to provision {}".format(zoneName))
+    logging.info("Outs: {}".format(outs))
+    logging.info("Errs: {}".format(errs))
     return outs, errs
 
 
