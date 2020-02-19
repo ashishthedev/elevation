@@ -9,21 +9,15 @@ import datetime
 import os
 import textwrap
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "zippedAdfFiles")
 UNZIPPED_FILES_DIR = os.path.join(BASE_DIR, "rawData", "unzippedAdfFiles")
 
 
-ZIP_FILES = {
-	"NT5": "gs://elevation_rawdata_zipped_bucket/NT5mDEM.zip",
-	"NSW": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
-	"QLD": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
-	"SA" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
-	"TAS": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
-	"VIC": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
-	"WA" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
-
-}
 INITIAL = "INITIAL"
 SUCCESS = "SUCCESS"
 FAILURE = "FAILURE"
@@ -78,9 +72,6 @@ class Provisioner(models.Model):
         obj.time_taken = None
         obj.save()
         try:
-            if zoneName not in ZIP_FILES:
-                raise ProvisioningException("{zoneName} is unknown. If this is a new zone, then code change is required for its provisioning.".format(zoneName=zoneName))
-
             cmd = "python3 provision_prog.py --zoneName {zoneName}".format(zoneName=zoneName)
             obj.log_text = "Cmd: {cmd}".format(cmd=cmd)
 
@@ -97,6 +88,7 @@ class Provisioner(models.Model):
         except Exception as ex:
             obj.log_text += "\n{cmd} Exception: {ex}".format(cmd=cmd, ex=ex)
             obj.state = FAILURE
+            logger.exception(obj.log_text)
         finally:
             obj.finished_at = datetime.datetime.now()
             obj.time_taken = obj.finished_at - obj.started_at

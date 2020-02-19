@@ -24,10 +24,10 @@ ZIP_FILES = {
     "NT5": "gs://elevation_rawdata_zipped_bucket/NT5mDEM.zip",
     "NSW5": "gs://elevation_rawdata_zipped_bucket/NSW5mDEM.zip",
     "QLD5": "gs://elevation_rawdata_zipped_bucket/QLD5mDEM.zip",
-    "SA5": "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
-    "TAS": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
+    "SA5" : "gs://elevation_rawdata_zipped_bucket/SA5mDEM.zip",
+    "TAS5": "gs://elevation_rawdata_zipped_bucket/TAS5mDEM.zip",
     "VIC5": "gs://elevation_rawdata_zipped_bucket/VIC5mDEM.zip",
-    "WA5": "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
+    "WA5" : "gs://elevation_rawdata_zipped_bucket/WA5mDEM.zip",
 
 }
 
@@ -41,8 +41,9 @@ def subprocess_call_with_output_returned(popenargs, **kwargs):
 
 def provisionZone(zoneName):
     source_zip_file_url = ZIP_FILES[zoneName]
-    dest_zip_file_path = os.path.join(
-        ZIPPED_FILES_DIR, os.path.basename(source_zip_file_url))
+    dest_zip_file_path = os.path.join(ZIPPED_FILES_DIR, os.path.basename(source_zip_file_url))
+    mydict = locals()
+    mydict.update(globals())
     cmd = textwrap.dedent("""mkdir -p {ZIPPED_FILES_DIR} && \
             sudo gsutil cp {source_zip_file_url} {dest_zip_file_path} && \
             mkdir -p {UNZIPPED_FILES_DIR} && \
@@ -50,8 +51,12 @@ def provisionZone(zoneName):
             mkdir {zoneName} && \
             cd {zoneName} && \
             sudo 7za e {dest_zip_file_path}
-            """.format(**locals()))
+            """.format(**mydict))
+            #""".format(**locals()))
     outs, errs = subprocess_call_with_output_returned(cmd, shell=True)
+    logging.info("Tried to provision {}".format(zoneName))
+    logging.info("Outs: {}".format(outs.decode("utf-8")))
+    logging.info("Errs: {}".format(errs.decode("utf-8")))
     return outs, errs
 
 

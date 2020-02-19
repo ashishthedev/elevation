@@ -1,9 +1,13 @@
 from django.http import JsonResponse
 from provision.models import Provisioner
 from django.views.decorators.csrf import csrf_exempt
+import logging
+
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def startProvisioning(request, zoneName):
+	logger.info("Inside startProvisioning for zoneName: {}".format(zoneName))
 	Provisioner.provision(zoneName)
 	return provisioningCurrentState(request, zoneName)
 
